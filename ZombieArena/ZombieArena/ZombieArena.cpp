@@ -63,6 +63,11 @@ int main()
     // The boundaries of the arena
     IntRect arena;
 
+    // Replace the default cursor on the custom
+    window.setMouseCursorVisible(false);
+    Sprite spriteCrosshair = Sprite(TextureManager::getInstance().getTexture("Resources/Graphics/crosshair.png"));
+    spriteCrosshair.setOrigin(25, 25);
+
     // The main game loop
     while (window.isOpen())
     {
@@ -258,6 +263,9 @@ int main()
             // And convert mouse position to world coordinates of mainView
             mouseWorldPosition = window.mapPixelToCoords(Mouse::getPosition(), mainView);
 
+            // Set the position for a custom crosshair
+            spriteCrosshair.setPosition(mouseWorldPosition);
+
             // Update the player
             player.update(dtAsSeconds, Mouse::getPosition());
 
@@ -317,6 +325,9 @@ int main()
 
             // Draw the player
             window.draw(player.getSprite());
+
+            //Draw the crosshair
+            window.draw(spriteCrosshair);
         }
 
         if (state == GameState::LEVELING_UP)
