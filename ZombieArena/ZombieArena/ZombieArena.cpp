@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "Background.h"
 #include "TextureManager.h"
+#include "Pickup.h"
 #include "Zombie.h"
 #include "ZombieHorde.h"
 #include "Utils.h"
@@ -67,6 +68,10 @@ int main()
     window.setMouseCursorVisible(false);
     Sprite spriteCrosshair = Sprite(TextureManager::getInstance().getTexture("Resources/Graphics/crosshair.png"));
     spriteCrosshair.setOrigin(25, 25);
+
+    // Create a couple of pickups
+    Pickup healthPickup(1);
+    Pickup ammoPickup(2);
 
     // The main game loop
     while (window.isOpen())
@@ -233,6 +238,10 @@ int main()
                 // Spawn the player in the middle of the arena
                 player.spawn(arena, resolution, tileSize);
 
+                // Configure the pickups
+                healthPickup.setArena(arena);
+                ammoPickup.setArena(arena);
+
                 // Delete the previously allocated memory (if it exists)
                 delete[] zombies;
                 // And create a new horde of zombies
@@ -292,6 +301,10 @@ int main()
                     bullets[i].update(timedelta.asSeconds());
                 }
             }
+
+            // Update the pickups
+            healthPickup.update(dtAsSeconds);
+            ammoPickup.update(dtAsSeconds);
         }
 
         //--------------------------------------------------
@@ -321,6 +334,16 @@ int main()
                 {
                     window.draw(bullets[i].getShape());
                 }
+            }
+
+            // Draw the pickups, if currently spawned
+            if (ammoPickup.isSpawned())
+            {
+                window.draw(ammoPickup.getSprite());
+            }
+            if (healthPickup.isSpawned())
+            {
+                window.draw(healthPickup.getSprite());
             }
 
             // Draw the player
