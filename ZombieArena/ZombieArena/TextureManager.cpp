@@ -24,7 +24,6 @@ Texture& TextureManager::getTexture(const std::string & filename)
         texture.loadFromFile(filename);
         return texture;
     }
-
 }
 
 

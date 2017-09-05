@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "Bullet.h"
 #include "Background.h"
 #include "TextureManager.h"
 #include "Zombie.h"
@@ -50,6 +51,15 @@ int main()
     int numZombiesAlive;
     Zombie* zombies = nullptr;
 
+    // Track the fired bullet by the player
+    Bullet bullets[100];
+    int currentBullet = 0;
+    int bulletsSpare = 24;
+    int bulletsInClip = 6;
+    int clipSize = 6;
+    float fireRate = 1.0f;
+    Time lastPressedFireButton;
+
     // The boundaries of the arena
     IntRect arena;
 
@@ -85,6 +95,23 @@ int main()
 
                 if (state == GameState::PLAYING)
                 {
+                    // Reload the weapon
+                    if (event.key.code == Keyboard::R)
+                    {
+                        if (bulletsSpare >= clipSize)
+                        {
+                            bulletsInClip = clipSize;
+                            bulletsSpare -= clipSize;
+                        }
+                        else if (bulletsSpare > 0)
+                        {
+                            bulletsInClip = bulletsSpare;
+                            bulletsSpare = 0;
+                        }
+                        else
+                        {
+                        }
+                    }
                 }
             }
         }
@@ -132,6 +159,25 @@ int main()
             else
             {
                 player.stopRight();
+            }
+
+            // Fire a bullet
+            if (Mouse::isButtonPressed(Mouse::Left))
+            {
+                if ((gameTimeTotal.asMilliseconds() - lastPressedFireButton.asMilliseconds() > 1000 / fireRate) && bulletsInClip > 0)
+                {
+                    Vector2f playerPosition = player.getCenter();
+                    bullets[currentBullet].shoot(playerPosition.x, playerPosition.y, mouseWorldPosition.x, mouseWorldPosition.y);
+                    
+                    // Reserve the next position for the future shots
+                    currentBullet++;
+                    currentBullet %= currentBullet % 100;
+
+                    // Update a time, when the left mouse button was clicked
+                    lastPressedFireButton = gameTimeTotal;
+                    // Reduce the count of bullets in the clip
+                    bulletsInClip--;
+                }
             }
         }
 
@@ -229,6 +275,15 @@ int main()
                     zombies[i].update(timedelta.asSeconds(), playerPosition);
                 }
             }
+
+            // Update each existing bullet
+            for (int i = 0; i < 100; ++i)
+            {
+                if (bullets[i].isInFlight())
+                {
+                    bullets[i].update(timedelta.asSeconds());
+                }
+            }
         }
 
         //--------------------------------------------------
@@ -249,6 +304,15 @@ int main()
             for (int i = 0; i < numZombies; ++i)
             {
                 window.draw(zombies[i].getSprite());
+            }
+
+            // Draw the bullets
+            for (int i = 0; i < 100; ++i)
+            {
+                if (bullets[i].isInFlight())
+                {
+                    window.draw(bullets[i].getShape());
+                }
             }
 
             // Draw the player
