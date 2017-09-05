@@ -22,23 +22,23 @@ Zombie* createHorde(int numZombies, IntRect arena)
         {
             // Left
             case 0:
-                x = minX;
-                y = (rand() % maxY) + minY;
+                x = static_cast<float>(minX);
+                y = static_cast<float>((rand() % maxY) + minY);
                 break;
             // Right
             case 1:
-                x = maxX;
-                y = (rand() % maxY) + minY;
+                x = static_cast<float>(maxX);
+                y = static_cast<float>((rand() % maxY) + minY);
                 break;
             // Top
             case 2:
-                x = (rand() % maxX) + minX;
-                y = minY;
+                x = static_cast<float>((rand() % maxX) + minX);
+                y = static_cast<float>(minY);
                 break;
             // Bottom
             case 3:    
-                x = (rand() % maxX) + minX;
-                y = maxY;
+                x = static_cast<float>((rand() % maxX) + minX);
+                y = static_cast<float>(maxY);
                 break;
         }
 

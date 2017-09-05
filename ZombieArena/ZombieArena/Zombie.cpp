@@ -3,9 +3,6 @@
 #include "TextureManager.h"
 
 
-TextureManager& textureManager = TextureManager::getInstance();
-
-
 Zombie::Zombie() :
 m_Alive(true),
 m_Speed(0),
@@ -21,7 +18,7 @@ bool Zombie::hit()
     if (m_Health < 0)
     {
         m_Alive = false;
-        m_Sprite.setTexture(textureManager.getTexture("Resources/Graphics/blood.png"));
+        m_Sprite.setTexture(TextureManager::getInstance().getTexture("Resources/Graphics/blood.png"));
         return true;
     }
     return false;
@@ -40,19 +37,19 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
     {
         // Bloater
         case 0:
-            m_Sprite = Sprite(textureManager.getTexture("Resources/Graphics/bloater.png"));
+            m_Sprite = Sprite(TextureManager::getInstance().getTexture("Resources/Graphics/bloater.png"));
             m_Speed = BLOATER_SPEED;
             m_Health = BLOATER_HEALTH;
             break;
         // Chaser
         case 1:
-            m_Sprite = Sprite(textureManager.getTexture("Resources/Graphics/chaser.png"));
+            m_Sprite = Sprite(TextureManager::getInstance().getTexture("Resources/Graphics/chaser.png"));
             m_Speed = CHASER_SPEED;
             m_Health = CHASER_HEALTH;
             break;
         // Crawler
         case 2:
-            m_Sprite = Sprite(textureManager.getTexture("Resources/Graphics/crawler.png"));
+            m_Sprite = Sprite(TextureManager::getInstance().getTexture("Resources/Graphics/crawler.png"));
             m_Speed = CRAWLER_SPEED;
             m_Health = CRAWLER_HEALTH;
             break;
@@ -60,7 +57,7 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
 
     // To make each zombie a unique lets modify their movement speed
     srand((int)time(0) * seed);
-    float modifier = (rand() % MAX_VARRIANCE) + OFFSET;
+    float modifier = static_cast<float>((rand() % MAX_VARRIANCE) + OFFSET);
 
     modifier /= 100;
     m_Speed *= modifier;
@@ -119,7 +116,7 @@ void Zombie::update(float elapsedTime, Vector2f playerLocation)
     m_Sprite.setPosition(m_Position);
 
     // Face the sprite in the correct direction
-    float angle = (atan2(playerY - m_Position.y, playerX - m_Position.x) * 180) / 3.141;
+    float angle = static_cast<float>((atan2(playerY - m_Position.y, playerX - m_Position.x) * 180) / 3.141);
     m_Sprite.setRotation(angle);
 }
 

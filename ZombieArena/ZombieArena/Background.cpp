@@ -24,18 +24,18 @@ int createBackground(VertexArray& rVA, IntRect arena)
         for (int j = 0; j < worldHeight; ++j)
         {
             // Specify sprite position on the game level
-            rVA[currentVertex + 0].position = Vector2f(i * TILE_SIZE, j * TILE_SIZE);
-            rVA[currentVertex + 1].position = Vector2f((i * TILE_SIZE) + TILE_SIZE, j * TILE_SIZE);
-            rVA[currentVertex + 2].position = Vector2f((i * TILE_SIZE) + TILE_SIZE, (j * TILE_SIZE) + TILE_SIZE);
-            rVA[currentVertex + 3].position = Vector2f((i * TILE_SIZE), (j * TILE_SIZE) + TILE_SIZE);
+            rVA[currentVertex + 0].position = Vector2f(static_cast<float>(i * TILE_SIZE), static_cast<float>(j * TILE_SIZE));
+            rVA[currentVertex + 1].position = Vector2f(static_cast<float>((i * TILE_SIZE) + TILE_SIZE), static_cast<float>(j * TILE_SIZE));
+            rVA[currentVertex + 2].position = Vector2f(static_cast<float>((i * TILE_SIZE) + TILE_SIZE), static_cast<float>((j * TILE_SIZE) + TILE_SIZE));
+            rVA[currentVertex + 3].position = Vector2f(static_cast<float>((i * TILE_SIZE)), static_cast<float>((j * TILE_SIZE) + TILE_SIZE));
 
             // Is it a border of the game level?
             if (i == 0 || i == worldWidght - 1 || j == 0 || j == worldHeight - 1)
             {
-                rVA[currentVertex + 0].texCoords = Vector2f(0, 0 + TILE_TYPES * TILE_SIZE);
-                rVA[currentVertex + 1].texCoords = Vector2f(TILE_SIZE, 0 + TILE_TYPES * TILE_SIZE);
-                rVA[currentVertex + 2].texCoords = Vector2f(TILE_SIZE, TILE_SIZE + TILE_TYPES * TILE_SIZE);
-                rVA[currentVertex + 3].texCoords = Vector2f(0, TILE_SIZE + TILE_TYPES * TILE_SIZE);
+                rVA[currentVertex + 0].texCoords = Vector2f(0.0f, static_cast<float>(0.0f + TILE_TYPES * TILE_SIZE));
+                rVA[currentVertex + 1].texCoords = Vector2f(static_cast<float>(TILE_SIZE), static_cast<float>(0.0f + TILE_TYPES * TILE_SIZE));
+                rVA[currentVertex + 2].texCoords = Vector2f(static_cast<float>(TILE_SIZE), static_cast<float>(TILE_SIZE + TILE_TYPES * TILE_SIZE));
+                rVA[currentVertex + 3].texCoords = Vector2f(0.0f, static_cast<float>(TILE_SIZE + TILE_TYPES * TILE_SIZE));
             }
             // Otherwise use a random texture for the current quad
             else
@@ -44,10 +44,10 @@ int createBackground(VertexArray& rVA, IntRect arena)
                 int groundTexture = rand() % TILE_TYPES;
                 int textureVerticalOffset = groundTexture * TILE_SIZE;
 
-                rVA[currentVertex + 0].texCoords = Vector2f(0, 0 + textureVerticalOffset);
-                rVA[currentVertex + 1].texCoords = Vector2f(TILE_SIZE, 0 + textureVerticalOffset);
-                rVA[currentVertex + 2].texCoords = Vector2f(TILE_SIZE, TILE_SIZE + textureVerticalOffset);
-                rVA[currentVertex + 3].texCoords = Vector2f(0, TILE_SIZE + textureVerticalOffset);
+                rVA[currentVertex + 0].texCoords = Vector2f(0.0f, static_cast<float>(0.0f + textureVerticalOffset));
+                rVA[currentVertex + 1].texCoords = Vector2f(static_cast<float>(TILE_SIZE), static_cast<float>(0.f + textureVerticalOffset));
+                rVA[currentVertex + 2].texCoords = Vector2f(static_cast<float>(TILE_SIZE), static_cast<float>(TILE_SIZE + textureVerticalOffset));
+                rVA[currentVertex + 3].texCoords = Vector2f(0.0f, static_cast<float>(TILE_SIZE + textureVerticalOffset));
             }
 
             currentVertex = currentVertex + VERTS_IN_QUAD;

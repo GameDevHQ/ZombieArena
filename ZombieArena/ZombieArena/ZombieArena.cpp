@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Background.h"
+#include "TextureManager.h"
 #include "Zombie.h"
 #include "ZombieHorde.h"
 #include "Utils.h"
@@ -13,11 +14,14 @@ int main()
 
     // Get the screen resolution and create an SFML window
     Vector2f resolution;
-    resolution.x = VideoMode::getDesktopMode().width;
-    resolution.y = VideoMode::getDesktopMode().height;
+    resolution.x = static_cast<float>(VideoMode::getDesktopMode().width);
+    resolution.y = static_cast<float>(VideoMode::getDesktopMode().height);
 
     // Create a window in a fullscreen mode
-    RenderWindow window(VideoMode(resolution.x, resolution.y), "Zombie Arena", Style::Fullscreen);
+    RenderWindow window(
+        VideoMode(static_cast<unsigned int>(resolution.x), static_cast<unsigned int>(resolution.y)),
+        "Zombie Arena", Style::Fullscreen
+    );
 
     // Create a an SFML View for the main action
     View mainView(sf::FloatRect(0, 0, resolution.x, resolution.y));
@@ -39,8 +43,7 @@ int main()
 
     // Create a game level background
     VertexArray background;
-    Texture textureBackground;
-    textureBackground.loadFromFile("Resources/Graphics/background_sheet.png");
+    Texture textureBackground = TextureManager::getInstance().getTexture("Resources/Graphics/background_sheet.png");
 
     // Monsters on the level
     int numZombies;
