@@ -1,62 +1,9 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "Background.h"
+#include "Zombie.h"
+#include "ZombieHorde.h"
 #include "Utils.h"
-
-
-int createBackground(VertexArray& rVA, IntRect arena)
-{
-    const int TILE_SIZE = 50;
-    const int TILE_TYPES = 3;
-    const int VERTS_IN_QUAD = 4;
-
-    int worldWidght = arena.width / TILE_SIZE;
-    int worldHeight = arena.height / TILE_SIZE;
-
-    // Resize the arena background to an appropriate sizee and make it with quads 
-    rVA.setPrimitiveType(Quads);
-    rVA.resize(worldWidght * worldHeight * VERTS_IN_QUAD);
-    
-    // Start of the beginning
-    int currentVertex = 0;
-
-
-    for (int i = 0; i < worldWidght; ++i)
-    {
-        for (int j = 0; j < worldHeight; ++j)
-        {
-            // Specify sprite position on the game level
-            rVA[currentVertex + 0].position = Vector2f(i * TILE_SIZE, j * TILE_SIZE);
-            rVA[currentVertex + 1].position = Vector2f((i * TILE_SIZE) + TILE_SIZE, j * TILE_SIZE);
-            rVA[currentVertex + 2].position = Vector2f((i * TILE_SIZE) + TILE_SIZE, (j * TILE_SIZE) + TILE_SIZE);
-            rVA[currentVertex + 3].position = Vector2f((i * TILE_SIZE), (j * TILE_SIZE) + TILE_SIZE);
-        
-            // Is it a border of the game level?
-            if (i == 0 || i == worldWidght - 1 || j == 0 || j == worldHeight - 1)
-            {
-                rVA[currentVertex + 0].texCoords = Vector2f(0, 0 + TILE_TYPES * TILE_SIZE);
-                rVA[currentVertex + 1].texCoords = Vector2f(TILE_SIZE, 0 + TILE_TYPES * TILE_SIZE);
-                rVA[currentVertex + 2].texCoords = Vector2f(TILE_SIZE, TILE_SIZE + TILE_TYPES * TILE_SIZE);
-                rVA[currentVertex + 3].texCoords = Vector2f(0, TILE_SIZE + TILE_TYPES * TILE_SIZE);
-            }
-            // Otherwise use a random texture for the current quad
-            else
-            {
-                srand(static_cast<int>(time(NULL)) + i *j - i);
-                int groundTexture = rand() % TILE_TYPES;
-                int textureVerticalOffset = groundTexture * TILE_SIZE;
-
-                rVA[currentVertex + 0].texCoords = Vector2f(0, 0 + textureVerticalOffset);
-                rVA[currentVertex + 1].texCoords = Vector2f(TILE_SIZE, 0 + textureVerticalOffset);
-                rVA[currentVertex + 2].texCoords = Vector2f(TILE_SIZE, TILE_SIZE + textureVerticalOffset);
-                rVA[currentVertex + 3].texCoords = Vector2f(0, TILE_SIZE + textureVerticalOffset);
-            }
-
-            currentVertex = currentVertex + VERTS_IN_QUAD;
-        }
-    }
-
-    return TILE_SIZE;
-}
 
 
 int main()
@@ -94,6 +41,11 @@ int main()
     VertexArray background;
     Texture textureBackground;
     textureBackground.loadFromFile("Resources/Graphics/background_sheet.png");
+
+    // Monsters on the level
+    int numZombies;
+    int numZombiesAlive;
+    Zombie* zombies = nullptr;
 
     // The boundaries of the arena
     IntRect arena;
@@ -227,6 +179,13 @@ int main()
                 // Spawn the player in the middle of the arena
                 player.spawn(arena, resolution, tileSize);
 
+                // Delete the previously allocated memory (if it exists)
+                delete[] zombies;
+                // And create a new horde of zombies
+                numZombies = 10;
+                zombies = createHorde(numZombies, arena);
+                numZombiesAlive = numZombies;
+
                 // Reset the clock at the start of the game...
                 clock.restart();
             }
@@ -258,6 +217,15 @@ int main()
 
             // Make the view centre around the player				
             mainView.setCenter(player.getCenter());
+
+            // Update each zombie if he is alive
+            for (int i = 0; i < numZombies; ++i)
+            {
+                if (zombies[i].isAlive())
+                {
+                    zombies[i].update(timedelta.asSeconds(), playerPosition);
+                }
+            }
         }
 
         //--------------------------------------------------
@@ -270,7 +238,17 @@ int main()
 
             // Set the mainView to be displayed in the window and draw related to it
             window.setView(mainView);
+            
+            // Draw the game level
             window.draw(background, &textureBackground);
+
+            // Draw the zombies
+            for (int i = 0; i < numZombies; ++i)
+            {
+                window.draw(zombies[i].getSprite());
+            }
+
+            // Draw the player
             window.draw(player.getSprite());
         }
 
@@ -288,6 +266,9 @@ int main()
 
         window.display();
     }
+
+    // Delete the previously allocated memory (if it exists)
+    delete[] zombies;
 
     return 0;
 }
