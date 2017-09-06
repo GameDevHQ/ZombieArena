@@ -3,7 +3,10 @@ The Zombie arena game, which is based on ideas and concepts from a "Beginning C+
 
 Hotkeys
 --------
+- Left mouse button for a shot from a gun
 - "W" / "S" / "A" / "D"  for movement
+- "R" for reload a weapon
+- Num1 / Num2 / Num3 / Num4 / Num5 / Num6 - for level up the player at the start of each level
 
 Requirements
 ------------
@@ -26,5 +29,5 @@ After opening the project in Visual Studio, go to "Project -> Timber properties.
 Screenshots
 -----------
 <p align="center">
-  <img src=""/>
+  <img src="https://github.com/GameDevHQ/ZombieArena/blob/master/Screenshots/Screenshot_1.png"/>
 </p>
