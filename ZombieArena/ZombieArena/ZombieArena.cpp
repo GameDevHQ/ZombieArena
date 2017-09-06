@@ -1,15 +1,20 @@
 #include "stdafx.h"
 #include <sstream>
 #include <fstream>
+#include <SFML/Audio.hpp>
 #include "Player.h"
 #include "Bullet.h"
 #include "Background.h"
 #include "HUD.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 #include "Pickup.h"
 #include "Zombie.h"
 #include "ZombieHorde.h"
 #include "Utils.h"
+
+
+SoundManager& soundManager = SoundManager::getInstance();
 
 
 int main()
@@ -216,41 +221,55 @@ int main()
         // Handle the player is leveling up
         if (state == GameState::LEVELING_UP)
         { 
+            // Increase fire rate
             if (event.key.code == Keyboard::Num1)
             {
+                fireRate++;
                 state = GameState::PLAYING;
             }
 
+            // Increate clip size
             if (event.key.code == Keyboard::Num2)
             {
+                clipSize += clipSize;
                 state = GameState::PLAYING;
             }
 
+            // Increate the player health
             if (event.key.code == Keyboard::Num3)
             {
+                player.upgradeHealth();
                 state = GameState::PLAYING;
             }
 
+            // Increase the player movement speed
             if (event.key.code == Keyboard::Num4)
             {
+                player.upgradeSpeed();
                 state = GameState::PLAYING;
             }
 
+            // Update health pickup
             if (event.key.code == Keyboard::Num5)
             {
+                healthPickup.upgrade();
                 state = GameState::PLAYING;
             }
 
+            // Update ammo pickup
             if (event.key.code == Keyboard::Num6)
             {
+                ammoPickup.upgrade();
                 state = GameState::PLAYING;
             }
 
             if (state == GameState::PLAYING)
             {
+                wave++;
+
                 // Prepare the game level
-                arena.width = 500;
-                arena.height = 500;
+                arena.width = 500 * wave;
+                arena.height = 500 * wave;
                 arena.left = 0;
                 arena.top = 0;
 
@@ -267,9 +286,11 @@ int main()
                 // Delete the previously allocated memory (if it exists)
                 delete[] zombies;
                 // And create a new horde of zombies
-                numZombies = 10;
+                numZombies = 5 * wave;
                 zombies = createHorde(numZombies, arena);
                 numZombiesAlive = numZombies;
+
+                soundManager.play("Resources/Sound/powerup.wav");
 
                 // Reset the clock at the start of the game...
                 clock.restart();
