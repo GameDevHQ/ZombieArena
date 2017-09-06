@@ -15,7 +15,7 @@ Requirements
 
 How to build 
 ------------
-After opening the project in Visual Studio, go to "Project -> Timber properties...":
+After opening the project in Visual Studio, go to "Project -> ZombieArena properties...":
 1) Select "All configurations" in "Configuration" section
 2) In "C/C++ -> General -> Additional include directories" section append the "include" directory of SFML library
 3) In "Linker -> General -> Additional library directories" section append the "lib" directory of SFML library
