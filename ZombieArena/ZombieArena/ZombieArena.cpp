@@ -152,14 +152,17 @@ int main()
                         {
                             bulletsInClip = clipSize;
                             bulletsSpare -= clipSize;
+                            soundManager.play("Resources/Sound/reload.wav");
                         }
                         else if (bulletsSpare > 0)
                         {
                             bulletsInClip = bulletsSpare;
                             bulletsSpare = 0;
+                            soundManager.play("Resources/Sound/reload.wav");
                         }
                         else
                         {
+                            soundManager.play("Resources/Sound/reload_failed.wav");
                         }
                     }
                 }
@@ -225,6 +228,9 @@ int main()
 
                     // Update a time, when the left mouse button was clicked
                     lastPressedFireButton = gameTimeTotal;
+                    
+                    soundManager.play("Resources/Sound/shoot.wav");
+                    
                     // Reduce the count of bullets in the clip
                     bulletsInClip--;
                 }
@@ -386,6 +392,8 @@ int main()
                                     state = GameState::LEVELING_UP;
                                 }
                             }
+
+                            soundManager.play("Resources/Sound/splat.wav");
                         }
                     }
                 }
@@ -398,7 +406,7 @@ int main()
                 {
                     if (player.hit(gameTimeTotal))
                     {
-                        // TODO: Add sound, effects etc.
+                        soundManager.play("Resources/Sound/hit.wav");
                     }
 
                     if (player.getHealth() <= 0)
@@ -416,12 +424,14 @@ int main()
             if (player.getPosition().intersects(healthPickup.getPosition()) && healthPickup.isSpawned())
             {
                 player.increaseHealthLevel(healthPickup.gotIt());
+                soundManager.play("Resources/Sound/pickup.wav");
             }
 
             // Has the player touched ammo pickup?
             if (player.getPosition().intersects(ammoPickup.getPosition()) && ammoPickup.isSpawned())
             {
                 bulletsSpare += ammoPickup.gotIt();
+                soundManager.play("Resources/Sound/reload.wav");
             }
 
             // Size up the health bar
