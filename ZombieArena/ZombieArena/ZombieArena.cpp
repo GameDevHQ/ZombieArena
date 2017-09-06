@@ -150,8 +150,9 @@ int main()
                     {
                         if (bulletsSpare >= clipSize)
                         {
+                            int bulletsForANewClip = clipSize - bulletsInClip;
                             bulletsInClip = clipSize;
-                            bulletsSpare -= clipSize;
+                            bulletsSpare -= bulletsForANewClip;
                             soundManager.play("Resources/Sound/reload.wav");
                         }
                         else if (bulletsSpare > 0)
