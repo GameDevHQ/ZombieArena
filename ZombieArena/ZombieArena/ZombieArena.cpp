@@ -128,6 +128,19 @@ int main()
                 else if (event.key.code == Keyboard::Return && state == GameState::GAME_OVER)
                 {
                     state = GameState::LEVELING_UP;
+
+                    wave = 0;
+                    score = 0;
+
+                    // Prepare the gun and ammo for next game
+                    currentBullet = 0;
+                    bulletsSpare = 24;
+                    bulletsInClip = 6;
+                    clipSize = 6;
+                    fireRate = 1;
+
+                    // Reset the player's stats
+                    player.resetPlayerStats();
                 }
 
                 if (state == GameState::PLAYING)
