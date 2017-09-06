@@ -1,7 +1,10 @@
 #include "stdafx.h"
+#include <sstream>
+#include <fstream>
 #include "Player.h"
 #include "Bullet.h"
 #include "Background.h"
+#include "HUD.h"
 #include "TextureManager.h"
 #include "Pickup.h"
 #include "Zombie.h"
@@ -76,6 +79,21 @@ int main()
     // The game scores
     int score = 0;
     int highScore = 0;
+    int wave = 0;
+
+    // Load the high-score from a text file
+    std::ifstream inputFile("GameData/scores.txt");
+    if (inputFile.is_open())
+    {
+        inputFile >> highScore;
+        inputFile.close();
+    }
+
+    // Game HUD
+    int framesSinceLastHUDUpdate = 0;        // When did we last update the HUD?
+    int fpsMeasurementFrameInterval = 1000;  // How often (in frames) should we update the HUD
+    HUD hud;
+    View hudView(sf::FloatRect(0, 0, resolution.x, resolution.y));
 
     // The main game loop
     while (window.isOpen())
@@ -311,26 +329,28 @@ int main()
             ammoPickup.update(dtAsSeconds);
 
             // Does any zombie get hit with a bullet?
-            for (int i = 0; i < 100; ++i)
+            for (int i = 0; i < 100; i++)
             {
-                for (int j = 0; j < numZombies; ++j)
+                for (int j = 0; j < numZombies; j++)
                 {
-                    bool zombieHasCollision = bullets[i].getPosition().intersects(zombies[j].getPosition());
-                    if (bullets[i].isInFlight() && zombies[j].isAlive() && zombieHasCollision)
+                    if (bullets[i].isInFlight() && zombies[j].isAlive())
                     {
-                        bullets[i].stop();
-
-                        if (zombies[j].hit())
+                        if (bullets[i].getPosition().intersects(zombies[j].getPosition()))
                         {
-                            // Increase the counters
-                            score += 10;
-                            highScore = (score >= highScore)? score : highScore;
-                            numZombiesAlive--;
+                            // Stop the bullet
+                            bullets[i].stop();
 
-                            // When all the zombies are dead (again)
-                            if (numZombiesAlive == 0)
-                            {
-                                state = GameState::LEVELING_UP;
+                            if (zombies[j].hit()) {
+                                // Increase the counters
+                                score += 10;
+                                highScore = (score >= highScore) ? score : highScore;
+                                numZombiesAlive--;
+
+                                // When all the zombies are dead (again)
+                                if (numZombiesAlive == 0) 
+                                {
+                                    state = GameState::LEVELING_UP;
+                                }
                             }
                         }
                     }
@@ -340,8 +360,7 @@ int main()
             // Have any zombies touched the player?
             for (int i = 0; i < numZombies; i++)
             {
-                bool playerHasCollision = player.getPosition().intersects(zombies[i].getPosition());
-                if (playerHasCollision && zombies[i].isAlive())
+                if (player.getPosition().intersects (zombies[i].getPosition()) && zombies[i].isAlive())
                 {
                     if (player.hit(gameTimeTotal))
                     {
@@ -351,6 +370,10 @@ int main()
                     if (player.getHealth() <= 0)
                     {
                         state = GameState::GAME_OVER;
+
+                        std::ofstream outputFile("GameData/scores.txt");
+                        outputFile << highScore;
+                        outputFile.close();
                     }
                 }
             }
@@ -365,6 +388,25 @@ int main()
             if (player.getPosition().intersects(ammoPickup.getPosition()) && ammoPickup.isSpawned())
             {
                 bulletsSpare += ammoPickup.gotIt();
+            }
+
+            // Size up the health bar
+            hud.resizeHealthBar(player.getHealth());
+            // Increment the number of frames since the last HUD calculation
+            framesSinceLastHUDUpdate++;
+
+            // Calculate FPS every fpsMeasurementFrameInterval frames
+            if (framesSinceLastHUDUpdate > fpsMeasurementFrameInterval)
+            {
+                hud.setBulletsInClip(bulletsInClip);
+                hud.setBulletsSpare(bulletsSpare);
+                hud.setScore(score);
+                hud.setHighScore(highScore);
+                hud.setWave(wave);
+                hud.setNumZombiesAlive(numZombiesAlive);
+
+                hud.update();
+                framesSinceLastHUDUpdate = 0;
             }
         }
 
@@ -412,18 +454,25 @@ int main()
 
             //Draw the crosshair
             window.draw(spriteCrosshair);
+
+            // Switch to the players HUD
+            window.setView(hudView);
+            hud.draw(window);
         }
 
         if (state == GameState::LEVELING_UP)
         {
+            hud.gameLevelUp(window);
         }
 
         if (state == GameState::PAUSED)
         {
+            hud.gamePaused(window);
         }
 
         if (state == GameState::GAME_OVER)
         {
+            hud.gameOver(window);
         }
 
         window.display();

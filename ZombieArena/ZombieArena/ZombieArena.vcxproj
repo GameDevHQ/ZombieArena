@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="stdafx.h" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="stdafx.cpp">
