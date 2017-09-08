@@ -3,6 +3,8 @@ The Zombie arena game, which is based on ideas and concepts from a "Beginning C+
 
 Hotkeys
 --------
+- "Esc" for exit from the game
+- "Enter" for start / pause the game
 - Left mouse button for a shot from a gun
 - "W" / "S" / "A" / "D"  for movement
 - "R" for reload a weapon
