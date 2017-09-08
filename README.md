@@ -8,7 +8,7 @@ Hotkeys
 - Left mouse button for a shot from a gun
 - "W" / "S" / "A" / "D"  for movement
 - "R" for reload a weapon
-- Num1 / Num2 / Num3 / Num4 / Num5 / Num6 - for level up the player at the start of each level
+- Num1 / Num2 / Num3 / Num4 / Num5 / Num6 for level up the player at the start of each level
 
 Requirements
 ------------
